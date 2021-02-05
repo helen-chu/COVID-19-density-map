@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mapbox</title>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css' rel='stylesheet' />
+    <link rel="stylesheet" type="text/css"  href='style.css' />
+</head>
+<body>
+    <div id='map'></div>
+    <div class='map-overlay' id='features'><h2>US COVID-19 Confirmed Cases Density</h2><div id='pd'><p>Hover over a state!</p></div></div>
+    <div class='map-overlay' id='legend'></div>
+    <script> 
+        mapboxgl.accessToken = 'pk.eyJ1IjoiaGVsZW5jaHUwMTA2IiwiYSI6ImNra2VwMjRvODBlc2Myd281NXRicGQxb3gifQ.nkQXH5COlp9pYe72ctxShQ';
+
+        var map = new mapboxgl.Map({
+        container: 'map', // container id
+        style: 'mapbox://styles/helenchu0106/ckkhkjwsl088z17qn0iwyi4fo' // replace this with your style URL
+        });
+
+        map.on('load', function() {
+            var layers = ['0-2', '2-4', '4-8', '8-16', '16+'];
+            var colors = ['#fce188', '#fbc232', '#f4ad1f', '#f99e0b', '#f38739', '#e70808'];
+            for (i = 0; i < layers.length; i++) {
+                var layer = layers[i];
+                var color = colors[i];
+                var item = document.createElement('div');
+                var key = document.createElement('span');
+                key.className = 'legend-key';
+                key.style.backgroundColor = color;
+
+                var value = document.createElement('span');
+                value.innerHTML = layer;
+                item.appendChild(key);
+                item.appendChild(value);
+                legend.appendChild(item);
+                }
+            
+                map.on('mousemove', function(e) {
+                    var states = map.queryRenderedFeatures(e.point, {
+                        layers: ['statedata']
+                    });
+
+                    if (states.length > 0) {
+                        document.getElementById('pd').innerHTML = '<h3><strong>' + states[0].properties.name + '</strong></h3><p><strong><em>' + states[0].properties.density + '</strong> confirmed cases per square mile</em><br><strong><em>' + states[0].properties.total + '</strong> total confirmed cases</em></p>';
+                    } else {
+                        document.getElementById('pd').innerHTML = '<p>Hover over a state!</p>';
+                    }
+                    });
+                
+                map.getCanvas().style.cursor = 'default';
+                    
+        });
+
+    </script>
+
+</body>
+</html>
+
+
